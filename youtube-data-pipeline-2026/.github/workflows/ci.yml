@@ -21,11 +21,13 @@ jobs:
           python-version: "3.12"
 
       - name: Install test dependencies
+        working-directory: youtube-data-pipeline-2026
         run: python -m pip install -r requirements-dev.txt
 
       - name: Run tests
+        working-directory: youtube-data-pipeline-2026
         run: python -m pytest -v
 
       - name: Check Step Functions JSON syntax
-        working-directory: ${{ github.workspace }}
+        working-directory: youtube-data-pipeline-2026
         run: python -m json.tool step-function/pipeline_orchestation.json > /dev/null
