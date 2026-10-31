@@ -1,8 +1,14 @@
-name: Python tests and workflow JSON
+name: YouTube pipeline CI
 
 on:
   push:
+    paths:
+      - "youtube-data-pipeline-2026/**"
+      - ".github/workflows/youtube-pipeline-ci.yml"
   pull_request:
+    paths:
+      - "youtube-data-pipeline-2026/**"
+      - ".github/workflows/youtube-pipeline-ci.yml"
 
 permissions:
   contents: read
@@ -10,22 +16,19 @@ permissions:
 jobs:
   test:
     runs-on: ubuntu-latest
-
+    defaults:
+      run:
+        working-directory: youtube-data-pipeline-2026
     steps:
       - name: Check out code
         uses: actions/checkout@v4
-
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-
       - name: Install test dependencies
         run: python -m pip install -r requirements-dev.txt
-
       - name: Run tests
         run: python -m pytest -v
-
       - name: Check Step Functions JSON syntax
-        working-directory: ${{ github.workspace }}
         run: python -m json.tool step-function/pipeline_orchestation.json > /dev/null
