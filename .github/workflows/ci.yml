@@ -1,31 +1,41 @@
-name: Python tests and workflow JSON
+name: Deploy portfolio dashboard
 
 on:
   push:
-  pull_request:
+    branches: [main]
+    paths:
+      - "docs/**"
+      - "scripts/build_portfolio_assets.py"
+      - ".github/workflows/pages.yml"
+  workflow_dispatch:
 
 permissions:
   contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: true
 
 jobs:
-  test:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
-
     steps:
       - name: Check out code
         uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload static dashboard
+        uses: actions/upload-pages-artifact@v3
         with:
-          python-version: "3.12"
+          path: docs
 
-      - name: Install test dependencies
-        run: python -m pip install pytest pandas
-
-      - name: Run tests
-        run: python -m pytest -v
-
-      - name: Check Step Functions JSON syntax
-        working-directory: ${{ github.workspace }}
-        run: python -m json.tool step-function/pipeline_orchestation.json > /dev/null
+      - name: Deploy dashboard
+        id: deployment
+        uses: actions/deploy-pages@v4
