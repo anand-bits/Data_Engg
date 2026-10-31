@@ -1,12 +1,12 @@
-name: Deploy portfolio dashboard
+name: Deploy YouTube portfolio dashboard
 
 on:
   push:
     branches: [main]
     paths:
-      - "docs/**"
-      - "scripts/build_portfolio_assets.py"
-      - ".github/workflows/pages.yml"
+      - "youtube-data-pipeline-2026/docs/**"
+      - "youtube-data-pipeline-2026/.github/workflows/pages.yml"
+      - ".github/workflows/youtube-pipeline-pages.yml"
   workflow_dispatch:
 
 permissions:
@@ -27,15 +27,12 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v4
-
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
-
       - name: Upload static dashboard
         uses: actions/upload-pages-artifact@v3
         with:
-          path: docs
-
+          path: youtube-data-pipeline-2026/docs
       - name: Deploy dashboard
         id: deployment
         uses: actions/deploy-pages@v4
