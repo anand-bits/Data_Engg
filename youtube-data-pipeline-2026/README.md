@@ -2,6 +2,8 @@
 
 A serverless AWS data pipeline that ingests YouTube trending-video data and transforms it into analytics-ready datasets using a Bronze, Silver, and Gold lakehouse layout.
 
+**Interactive portfolio demo:** [open the dashboard](https://anand-bits.github.io/Data_Engg/) after GitHub Pages has been enabled for the repository. It includes historical trend exploration and an in-browser ML baseline.
+
 > **Deployment status:** This repository contains application code, a Step Functions definition, tests, and a CI workflow. It does not contain infrastructure-as-code or an automated AWS deployment workflow. The architecture diagram includes AWS components that may be configured outside this repository. Review the [deployment readiness](#production-readiness) section before using this as a production system.
 
 ## Architecture
@@ -30,6 +32,11 @@ The Step Functions definition runs ingestion, waits briefly, runs reference tran
 | `step-function/pipeline_orchestation.json` | Step Functions workflow definition. |
 | `tests/` | Unit tests for Lambda/data-quality logic and static Glue-job contract checks. |
 | `.github/workflows/ci.yml` | Runs pytest and checks the workflow JSON on pushes and pull requests. |
+| `.github/workflows/pages.yml` | Publishes the static portfolio dashboard to GitHub Pages when this project is the repository root. |
+| `scripts/build_portfolio_assets.py` | Produces compact dashboard data and an exported scikit-learn model. |
+| `docs/index.html`, `docs/app.js`, `docs/styles.css` | Static, responsive interactive dashboard for GitHub Pages. |
+| `docs/assets/` | Generated, compact summary data and browser inference parameters. |
+| `requirements-dev.txt` | Reproducible local development and model-building dependencies. |
 | `data/` | Historical Kaggle CSV and category JSON files. |
 | `docs/architecture.png` | Pipeline architecture diagram. |
 
@@ -96,6 +103,27 @@ python -m pytest -v
 ```
 
 The tests mock AWS clients for Lambda and data-quality unit tests. Glue tests check syntax and selected job contracts; they do not execute Spark transformations. Run Glue integration tests in an AWS Glue-compatible environment before relying on those transformations in production.
+
+## Interactive portfolio dashboard and ML demo
+
+The dashboard is a separate static site in `docs/`. It does not call AWS or YouTube at runtime and does not expose credentials. It displays compact summaries generated from the historical CSV snapshots and offers filters, charts, search, and a model inference form.
+
+Build or refresh the static data and model after changing the source CSVs:
+
+```bash
+python -m pip install -r requirements-dev.txt
+python scripts/build_portfolio_assets.py
+```
+
+The builder reads the bundled Kaggle files and writes `docs/assets/analytics.json` and `docs/assets/model.json`. The CSVs total about 514 MB; the generated assets are compact and are what the website serves.
+
+The model is a scikit-learn Ridge regression model for `log1p(views)`. It uses region, category, title length/word count, publish hour/day, video age, and tag count. It deliberately excludes current likes, comments, and views as input features. Evaluation holds out whole `video_id` groups so snapshots of the same video cannot leak across train and test. Current evaluation is displayed on the page. This is an exploratory benchmark on videos already included in a historical trending dataset; it does not predict whether an arbitrary new video will trend, and it is not a live forecast.
+
+### Publish with GitHub Pages
+
+Enable **Settings → Pages → Build and deployment → Source: GitHub Actions** in the GitHub repository. When the dashboard is deployed successfully, the workflow publishes the contents of `docs/` as a static site. No AWS credentials or secrets are needed for this dashboard.
+
+This project currently sits in the `youtube-data-pipeline-2026/` subdirectory of the `Data_Engg` Git repository. GitHub Actions only discovers workflows under the repository-root `.github/workflows/`, so move/copy the provided workflow definitions to that root when deploying this monorepo. The root workflow must use `youtube-data-pipeline-2026/docs` as its Pages artifact path. If you make this project its own GitHub repository, the workflow files inside this project will be discovered normally.
 
 Validate the Step Functions JSON syntax locally:
 
@@ -168,7 +196,7 @@ Lambda and Glue logs are available in CloudWatch Logs when logging is enabled fo
 
 ## Continuous integration
 
-The GitHub Actions workflow in `.github/workflows/ci.yml` runs pytest and checks JSON syntax on pushes and pull requests. It does not deploy resources to AWS or start a Step Functions execution. AWS semantic validation and deployment are currently manual.
+The CI workflow runs pytest and checks JSON syntax on pushes and pull requests. It does not deploy AWS resources or start a Step Functions execution. AWS semantic validation and deployment are currently manual. For this monorepo, the workflow must be installed at the Git repository root as described above.
 
 ## Data layout
 

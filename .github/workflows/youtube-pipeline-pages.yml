@@ -1,0 +1,38 @@
+name: Deploy YouTube portfolio dashboard
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "youtube-data-pipeline-2026/docs/**"
+      - "youtube-data-pipeline-2026/.github/workflows/pages.yml"
+      - ".github/workflows/youtube-pipeline-pages.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+      - name: Upload static dashboard
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: youtube-data-pipeline-2026/docs
+      - name: Deploy dashboard
+        id: deployment
+        uses: actions/deploy-pages@v4
