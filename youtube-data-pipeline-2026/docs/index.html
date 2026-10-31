@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#07111f">
+    <meta name="description" content="Interactive analytics and an in-browser machine-learning demo for historical YouTube trending videos.">
+    <title>Signal — YouTube Trend Intelligence</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="Main navigation">
+        <a class="brand" href="#overview" aria-label="Signal home">
+          <span class="brand-mark" aria-hidden="true">S</span>
+          <span>signal<span class="brand-dot">.</span><small>DATA INTELLIGENCE</small></span>
+        </a>
+        <div class="nav-label">WORKSPACE</div>
+        <a class="nav-link active" href="#overview"><span>▦</span> Overview</a>
+        <a class="nav-link" href="#explore"><span>⌕</span> Explore trends</a>
+        <a class="nav-link" href="#estimator"><span>✳</span> ML estimator <em>AI</em></a>
+        <div class="sidebar-bottom">
+          <div class="live-card">
+            <span class="live-dot"></span>
+            <div><strong>Historical dataset</strong><small id="sidebar-period">Loading snapshot…</small></div>
+          </div>
+          <a class="repo-link" href="https://github.com/" target="_blank" rel="noreferrer">View project on GitHub ↗</a>
+        </div>
+      </aside>
+
+      <main id="overview" class="main-content">
+        <header class="topbar">
+          <div class="breadcrumb">ANALYTICS <span>/</span> <strong>OVERVIEW</strong></div>
+          <div class="topbar-right"><span class="status-pill"><i></i> DEMO MODE</span><span class="avatar">YT</span></div>
+        </header>
+
+        <section class="page-heading">
+          <div>
+            <div class="eyebrow">CREATOR ECONOMY · SIGNAL INTELLIGENCE</div>
+            <h1>Trending, in context<span>.</span></h1>
+            <p>Explore what gained momentum across regions, categories, and time.</p>
+          </div>
+          <label class="select-wrap" for="region-filter"><span>REGION</span><select id="region-filter" aria-label="Filter by region"></select></label>
+        </section>
+
+        <div class="data-note"><span>ⓘ</span><span><strong>Historical sample</strong> · Kaggle YouTube trending snapshots, <span id="data-period">loading date range</span>. This dashboard is not connected to live YouTube data.</span></div>
+
+        <section class="metric-grid" aria-label="Dataset overview">
+          <article class="metric-card"><div class="metric-top"><span>OBSERVATIONS</span><span class="metric-icon violet">▤</span></div><strong id="metric-records">—</strong><small>trending records in sample</small><div class="metric-foot"><span class="foot-bar violet-bar"></span><span class="foot-bar violet-bar"></span><span class="foot-bar violet-bar"></span><span class="foot-bar violet-bar"></span><span class="foot-bar violet-bar"></span><span class="foot-bar violet-bar"></span><span class="foot-bar violet-bar"></span><span class="foot-bar violet-bar"></span></div></article>
+          <article class="metric-card"><div class="metric-top"><span>UNIQUE VIDEOS</span><span class="metric-icon blue">▷</span></div><strong id="metric-videos">—</strong><small>distinct video IDs</small><div class="metric-foot"><span class="foot-bar blue-bar"></span><span class="foot-bar blue-bar"></span><span class="foot-bar blue-bar"></span><span class="foot-bar blue-bar"></span><span class="foot-bar blue-bar"></span><span class="foot-bar blue-bar"></span><span class="foot-bar blue-bar"></span><span class="foot-bar blue-bar"></span></div></article>
+          <article class="metric-card"><div class="metric-top"><span>REGIONS</span><span class="metric-icon mint">◎</span></div><strong id="metric-regions">—</strong><small>markets represented</small><div class="metric-foot"><span class="foot-bar mint-bar"></span><span class="foot-bar mint-bar"></span><span class="foot-bar mint-bar"></span><span class="foot-bar mint-bar"></span><span class="foot-bar mint-bar"></span><span class="foot-bar mint-bar"></span><span class="foot-bar mint-bar"></span><span class="foot-bar mint-bar"></span></div></article>
+          <article class="metric-card"><div class="metric-top"><span>VIDEOS IN REGION</span><span class="metric-icon amber">↗</span></div><strong id="metric-region-videos">—</strong><small id="metric-region-label">selected region</small><div class="metric-foot"><span class="foot-bar amber-bar"></span><span class="foot-bar amber-bar"></span><span class="foot-bar amber-bar"></span><span class="foot-bar amber-bar"></span><span class="foot-bar amber-bar"></span><span class="foot-bar amber-bar"></span><span class="foot-bar amber-bar"></span><span class="foot-bar amber-bar"></span></div></article>
+        </section>
+
+        <section class="dashboard-grid" id="explore">
+          <article class="panel category-panel">
+            <div class="panel-heading"><div><div class="eyebrow">CONTENT MIX</div><h2>Categories with reach</h2></div><span class="panel-tag">BY AVG. VIEWS</span></div>
+            <p class="panel-copy">Average recorded views per trending video in the selected region.</p>
+            <div id="category-chart" class="chart-area" role="img" aria-label="Average views by category"></div>
+            <div id="category-legend" class="chart-legend"></div>
+          </article>
+          <article class="panel activity-panel">
+            <div class="panel-heading"><div><div class="eyebrow">SNAPSHOT ACTIVITY</div><h2>Trending over time</h2></div><span class="panel-tag">DAILY VIEWS</span></div>
+            <p class="panel-copy">Total views recorded in each daily snapshot. Historical observations, not current activity.</p>
+            <div id="activity-chart" class="chart-area line-area" role="img" aria-label="Daily recorded views over time"></div>
+            <div id="activity-range" class="chart-range"></div>
+          </article>
+        </section>
+
+        <section class="panel table-panel">
+          <div class="panel-heading table-heading"><div><div class="eyebrow">VIDEO LEADERBOARD</div><h2>Highest-viewed snapshots</h2></div><div class="table-tools"><label class="search-box"><span aria-hidden="true">⌕</span><input id="video-search" type="search" placeholder="Search titles…" aria-label="Search video titles"></label><span id="video-count" class="panel-tag">— VIDEOS</span></div></div>
+          <div class="table-scroll"><table><thead><tr><th>VIDEO</th><th>CATEGORY</th><th>VIEWS</th><th>ENGAGEMENT</th><th>REGION</th></tr></thead><tbody id="video-rows"></tbody></table></div>
+          <div id="empty-state" class="empty-state" hidden>No videos match your search.</div>
+        </section>
+
+        <section id="estimator" class="model-section">
+          <div class="model-intro"><div class="eyebrow">A SMALL MODEL, A CLEAR SCOPE</div><h2>Estimate the view range<span>.</span></h2><p>Try a video profile and see what the historical model learned. It estimates views for videos that appeared in this dataset’s trending snapshots—not whether a new video will trend.</p><div class="model-badges"><span>RIDGE REGRESSION</span><span>GROUPED HOLDOUT</span><span>RUNS IN YOUR BROWSER</span></div></div>
+          <div class="model-card">
+            <div class="model-card-head"><div><span class="spark-icon">✳</span><strong>Trending view estimator</strong></div><span class="privacy-tag">LOCAL INFERENCE</span></div>
+            <div class="model-fields">
+              <label>REGION<select id="model-region"></select></label>
+              <label>CATEGORY<select id="model-category"></select></label>
+              <label class="field-wide">VIDEO TITLE<input id="model-title" type="text" maxlength="120" value="A new creator video" placeholder="Enter a sample title"></label>
+              <label>VIDEO AGE (DAYS)<input id="model-age" type="number" min="0" max="3650" value="2"></label>
+              <label>PUBLISH HOUR (UTC)<input id="model-hour" type="number" min="0" max="23" value="16"></label>
+              <label>PUBLISH WEEKDAY<select id="model-weekday"><option value="0">Monday</option><option value="1">Tuesday</option><option value="2">Wednesday</option><option value="3" selected>Thursday</option><option value="4">Friday</option><option value="5">Saturday</option><option value="6">Sunday</option></select></label>
+              <label>TAGS<input id="model-tags" type="number" min="0" max="100" value="5"></label>
+            </div>
+            <div class="estimate-result"><div><span class="result-label">ESTIMATED VIEWS</span><strong id="estimate-value">Enter a profile</strong><small id="estimate-context">The model runs locally in this page.</small></div><span class="result-mark">↗</span></div>
+            <div class="model-evaluation"><div><span>TEST R² · LOG VIEWS</span><strong id="model-r2">—</strong></div><div><span>TEST MAE · LOG VIEWS</span><strong id="model-mae">—</strong></div><div><span>VIDEO GROUPED SPLIT</span><strong id="model-split">—</strong></div></div>
+            <p class="model-disclaimer">Exploratory benchmark trained on historical, already-trending videos. It does not use current likes/views as inputs and should not guide business decisions.</p>
+          </div>
+        </section>
+
+        <footer class="footer"><span>Built with Python, pandas, scikit-learn & vanilla JavaScript.</span><span>Portfolio demo · Not affiliated with YouTube or Google.</span></footer>
+      </main>
+    </div>
+    <div id="load-error" class="load-error" hidden>Dashboard data could not be loaded. Serve this folder through GitHub Pages or a local web server rather than opening the file directly.</div>
+    <script src="app.js" defer></script>
+  </body>
+</html>
