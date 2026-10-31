@@ -16,11 +16,11 @@ Improvements over original pyspark_code.py:
 
 Job Parameters:
     --JOB_NAME                   — Glue job name (auto-set)
-    --bronze_database            — Bronze Glue catalog database
-    --bronze_table               — Bronze statistics table
-    --silver_bucket              — Silver S3 bucket
-    --silver_database            — Silver Glue catalog database
-    --silver_table               — Silver statistics table
+    --bronze_database            — Bronze Glue catalog database (yt_pipeline_bronze_dev)
+    --bronze_table               — Bronze statistics table (raw_statistics)
+    --silver_bucket              — Silver S3 bucket (project-yt-silver-anand)
+    --silver_database            — Silver Glue catalog database (yt_pipeline_silver_dev)
+    --silver_table               — Silver statistics table (clean_statistics)
     --silver_path                — Silver S3 path prefix
 """
 
