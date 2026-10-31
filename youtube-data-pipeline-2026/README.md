@@ -31,8 +31,8 @@ The Step Functions definition runs ingestion, waits briefly, runs reference tran
 | `glue/silver_to_gold_analytics.py` | Builds the three Gold analytics tables. |
 | `step-function/pipeline_orchestation.json` | Step Functions workflow definition. |
 | `tests/` | Unit tests for Lambda/data-quality logic and static Glue-job contract checks. |
-| `.github/workflows/ci.yml` | Runs pytest and checks the workflow JSON on pushes and pull requests. |
-| `.github/workflows/pages.yml` | Publishes the static portfolio dashboard to GitHub Pages when this project is the repository root. |
+| `../.github/workflows/youtube-pipeline-ci.yml` | Monorepo-root workflow that runs pytest and checks the workflow JSON on pushes and pull requests. |
+| `../.github/workflows/youtube-pipeline-pages.yml` | Monorepo-root workflow that publishes the static dashboard to GitHub Pages. |
 | `scripts/build_portfolio_assets.py` | Produces compact dashboard data and an exported scikit-learn model. |
 | `docs/index.html`, `docs/app.js`, `docs/styles.css` | Static, responsive interactive dashboard for GitHub Pages. |
 | `docs/assets/` | Generated, compact summary data and browser inference parameters. |
@@ -117,13 +117,19 @@ python scripts/build_portfolio_assets.py
 
 The builder reads the bundled Kaggle files and writes `docs/assets/analytics.json` and `docs/assets/model.json`. The CSVs total about 514 MB; the generated assets are compact and are what the website serves.
 
+Preview the dashboard locally after generating the assets:
+
+```bash
+python -m http.server 8000 --directory docs
+```
+
+Then open `http://localhost:8000` in a browser. A local web server is needed because the page fetches its JSON assets.
+
 The model is a scikit-learn Ridge regression model for `log1p(views)`. It uses region, category, title length/word count, publish hour/day, video age, and tag count. It deliberately excludes current likes, comments, and views as input features. Evaluation holds out whole `video_id` groups so snapshots of the same video cannot leak across train and test. Current evaluation is displayed on the page. This is an exploratory benchmark on videos already included in a historical trending dataset; it does not predict whether an arbitrary new video will trend, and it is not a live forecast.
 
 ### Publish with GitHub Pages
 
-Enable **Settings → Pages → Build and deployment → Source: GitHub Actions** in the GitHub repository. When the dashboard is deployed successfully, the workflow publishes the contents of `docs/` as a static site. No AWS credentials or secrets are needed for this dashboard.
-
-This project currently sits in the `youtube-data-pipeline-2026/` subdirectory of the `Data_Engg` Git repository. GitHub Actions only discovers workflows under the repository-root `.github/workflows/`, so move/copy the provided workflow definitions to that root when deploying this monorepo. The root workflow must use `youtube-data-pipeline-2026/docs` as its Pages artifact path. If you make this project its own GitHub repository, the workflow files inside this project will be discovered normally.
+This project sits in the `youtube-data-pipeline-2026/` subdirectory of the `Data_Engg` Git repository. The active workflows are therefore at the monorepo root: `.github/workflows/youtube-pipeline-ci.yml` runs CI, and `.github/workflows/youtube-pipeline-pages.yml` publishes `youtube-data-pipeline-2026/docs/`. Enable **Settings → Pages → Build and deployment → Source: GitHub Actions** in the `Data_Engg` repository. After changes are pushed to `main`, the Pages workflow deploys the dashboard to [https://anand-bits.github.io/Data_Engg/](https://anand-bits.github.io/Data_Engg/). No AWS credentials or secrets are needed for the dashboard.
 
 Validate the Step Functions JSON syntax locally:
 
