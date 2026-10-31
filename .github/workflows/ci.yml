@@ -27,4 +27,5 @@ jobs:
         run: python -m pytest -v
 
       - name: Check Step Functions JSON syntax
-        run: python -m json.tool step-function/pipeline_orchestation.json
+        working-directory: ${{ github.workspace }}
+        run: python -m json.tool step-function/pipeline_orchestation.json > /dev/null
