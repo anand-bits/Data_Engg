@@ -28,4 +28,4 @@ jobs:
 
       - name: Check Step Functions JSON syntax
         working-directory: ${{ github.workspace }}
-        run: python -m json.tool step-function/pipeline_orchestation.json > /dev/null
+        run: python -m json.tool youtube-data-pipeline-2026/step-function/pipeline_orchestation.json > /dev/null
