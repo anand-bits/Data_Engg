@@ -71,8 +71,8 @@ logger.info(f"Silver: {SILVER_DB}.{SILVER_TABLE} → {SILVER_PATH}")
 # ── Step 1: Read from Bronze ────────────────────────────────────────────────
 logger.info("Reading from Bronze catalog...")
 
-# Predicate pushdown — include both upper and lowercase to handle either partition format
-predicate = "region in ('ca','gb','us', 'in')"
+# All regions returned by the ingestion Lambda use lowercase partition values.
+predicate = "region in ('ca','de','fr','gb','in','jp','kr','mx','ru','us')"
 
 datasource = glueContext.create_dynamic_frame.from_catalog(
     database=BRONZE_DB,

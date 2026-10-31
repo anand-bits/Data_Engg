@@ -7,7 +7,7 @@ Gold Bucket name- project-yt-gold-anand
 Script- project-yt-script-anand
 
 
-SNS ARN - arn:aws:sns:ap-southeast-2:908768512617:yt-data-pipeline-alerts-dev:e5d198bb-cae4-4a3e-ac84-e1cc80f6199c
+SNS Topic ARN - arn:aws:sns:ap-southeast-2:908768512617:yt-data-pipeline-alerts-dev
 
 
 Glue Bronze database- yt_pipeline_bronze_dev
