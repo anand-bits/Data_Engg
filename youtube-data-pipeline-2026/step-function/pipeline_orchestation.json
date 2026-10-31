@@ -51,7 +51,9 @@
               "Parameters": {
                 "FunctionName": "arn:aws:lambda:ap-southeast-2:908768512617:function:yt-data-pipleine-json-to-parquet-dev",
                 "Payload": {
-                  "triggered_by": "step_functions"
+                  "triggered_by": "step_functions",
+                  "ingestion_id.$": "$.ingestion_result.Payload.ingestion_id",
+                  "regions.$": "$.ingestion_result.Payload.results.success"
                 }
               },
               "ResultPath": "$.reference_result",
