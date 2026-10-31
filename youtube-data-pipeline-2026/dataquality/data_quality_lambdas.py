@@ -12,8 +12,10 @@ Checks performed:
   5. Freshness — is the data recent enough?
 
 Environment Variables:
-    S3_BUCKET_SILVER        — Silver bucket to check
-    SNS_ALERT_TOPIC_ARN     — SNS for alerts
+    S3_BUCKET_SILVER        — Silver data bucket (project-yt-silver-anand)
+    GLUE_DB_SILVER          — Silver Glue database (yt_pipeline_silver_dev)
+    ATHENA_QUERY_RESULTS_S3 — Athena query results prefix
+    SNS_ALERT_TOPIC_ARN     — SNS topic ARN for alerts
 """
 
 import os
@@ -29,7 +31,16 @@ logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
 sns_client = boto3.client("sns")
-SNS_TOPIC = os.environ.get("SNS_ALERT_TOPIC_ARN", "")
+SILVER_BUCKET = os.environ.get("S3_BUCKET_SILVER", "project-yt-silver-anand")
+GLUE_DB_SILVER = os.environ.get("GLUE_DB_SILVER", "yt_pipeline_silver_dev")
+ATHENA_QUERY_RESULTS_S3 = os.environ.get(
+    "ATHENA_QUERY_RESULTS_S3",
+    "s3://yt-athena-query-result-anand/athena-results/",
+)
+SNS_TOPIC = os.environ.get(
+    "SNS_ALERT_TOPIC_ARN",
+    "arn:aws:sns:ap-southeast-2:908768512617:yt-data-pipeline-alerts-dev",
+)
 
 # ── Thresholds ───────────────────────────────────────────────────────────────
 MIN_ROW_COUNT = int(os.environ.get("DQ_MIN_ROW_COUNT", "10"))
@@ -174,7 +185,7 @@ def lambda_handler(event, context):
         "tables": ["clean_statistics", "clean_reference_data"]
     }
     """
-    database = event.get("database", "yt_pipeline_silver_dev")
+    database = event.get("database", GLUE_DB_SILVER)
     tables = event.get("tables", ["clean_statistics"])
 
     all_results = []
@@ -190,6 +201,7 @@ def lambda_handler(event, context):
                 sql=query,
                 database=database,
                 ctas_approach=False,
+                s3_output=ATHENA_QUERY_RESULTS_S3,
             )
         except Exception as e:
             logger.error(f"Could not read {table_name}: {e}")

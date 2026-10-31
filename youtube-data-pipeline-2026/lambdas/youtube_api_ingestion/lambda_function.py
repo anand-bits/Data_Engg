@@ -37,7 +37,7 @@ sns_client = boto3.client("sns")
 API_KEY = os.environ["YOUTUBE_API_KEY"]
 BUCKET = os.environ["S3_BUCKET_BRONZE"]
 REGIONS = os.environ.get("YOUTUBE_REGIONS", "US,GB,CA,DE,FR,IN,JP,KR,MX,RU").split(",")
-SNS_TOPIC = os.environ.get("SNS_ALERT_TOPIC_ARN", "arn:aws:sns:ap-southeast-2:908768512617:yt-data-pipeline-alerts-dev:e5d198bb-cae4-4a3e-ac84-e1cc80f6199c")
+SNS_TOPIC = os.environ.get("SNS_ALERT_TOPIC_ARN", "arn:aws:sns:ap-southeast-2:908768512617:yt-data-pipeline-alerts-dev")
 API_BASE = "https://www.googleapis.com/youtube/v3"
 MAX_RESULTS = 50
 

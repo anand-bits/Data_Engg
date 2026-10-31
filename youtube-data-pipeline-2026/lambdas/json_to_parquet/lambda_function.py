@@ -36,7 +36,7 @@ logger.setLevel(logging.INFO)
 SILVER_BUCKET = os.environ.get("S3_BUCKET_SILVER", "project-yt-silver-anand")
 GLUE_DB = os.environ.get("GLUE_DB_SILVER", "yt_pipeline_silver_dev")
 GLUE_TABLE = os.environ.get("GLUE_TABLE_REFERENCE", "clean_reference_data")
-SNS_TOPIC = os.environ.get("SNS_ALERT_TOPIC_ARN", "arn:aws:sns:ap-southeast-2:908768512617:yt-data-pipeline-alerts-dev:e5d198bb-cae4-4a3e-ac84-e1cc80f6199c")
+SNS_TOPIC = os.environ.get("SNS_ALERT_TOPIC_ARN", "arn:aws:sns:ap-southeast-2:908768512617:yt-data-pipeline-alerts-dev")
 SILVER_PATH = f"s3://{SILVER_BUCKET}/youtube/reference_data/"
 
 s3_client = boto3.client("s3")
