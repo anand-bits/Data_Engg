@@ -1,0 +1,30 @@
+name: Python tests and workflow JSON
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install test dependencies
+        run: python -m pip install pytest pandas
+
+      - name: Run tests
+        run: python -m pytest -v
+
+      - name: Check Step Functions JSON syntax
+        run: python -m json.tool step-function/pipeline_orchestation.json
